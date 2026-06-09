@@ -2,8 +2,8 @@
 
 use crate::api::{ApiClient, ImportDocParams, AppendDocParams};
 use crate::config::Config;
-use crate::error::{self, Result};
-use crate::commands::NotesCommands;
+use crate::error::Result;
+use crate::NotesCommands;
 
 /// Handle notes commands
 pub async fn handle_notes_command(action: NotesCommands, config: &Config) -> Result<String> {
@@ -52,12 +52,6 @@ pub async fn handle_notes_command(action: NotesCommands, config: &Config) -> Res
             let response = client.search_docs(&notebook_id, &query, &cursor, limit).await?;
             Ok(serde_json::to_string_pretty(&response.data)?)
         }
-    }
-}
-
-impl From<serde_json::Error> for crate::error::Result<String> {
-    fn from(err: serde_json::Error) -> Self {
-        Err(crate::error::json_error(err))
     }
 }
 

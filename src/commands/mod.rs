@@ -110,7 +110,7 @@ pub async fn check_update(config: &Config) -> Result<String> {
                 let release_desc = data.get("release_desc").and_then(|v| v.as_str()).unwrap_or("");
                 let instruction = data.get("instruction").and_then(|v| v.as_str()).unwrap_or("请更新。");
 
-                let update_context = serde_json::json!({
+                let _update_context = serde_json::json!({
                     "current_version": config.skill_version,
                     "latest_version": latest_version,
                     "release_desc": release_desc,

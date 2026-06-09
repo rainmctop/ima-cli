@@ -151,6 +151,10 @@ pub fn invalid_config(detail: impl Into<String>) -> Error {
     Error::InvalidConfig(detail.into())
 }
 
+pub fn api_request_failed(detail: impl Into<String>) -> Error {
+    Error::ApiRequestFailed(detail.into())
+}
+
 pub fn api_error(code: i32, msg: impl Into<String>) -> Error {
     Error::ApiResponseError(code, msg.into())
 }

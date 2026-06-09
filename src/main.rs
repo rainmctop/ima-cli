@@ -12,10 +12,7 @@
 //! - 2: Update available
 
 use clap::{Parser, Subcommand};
-use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
-use std::fs;
-use std::io::{self, Write};
 
 mod error;
 mod config;
@@ -23,7 +20,7 @@ mod api;
 mod cos;
 mod commands;
 
-use error::{Result, CliError};
+use error::CliError;
 use config::Config;
 
 /// IMA CLI - Command-line tool for IMA knowledge base and notes management
