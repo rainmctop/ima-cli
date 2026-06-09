@@ -297,10 +297,8 @@ async fn main() {
     let config = match Config::load(cli.config.as_ref()) {
         Ok(cfg) => cfg,
         Err(e) => {
-            eprintln!("{}", serde_json::to_string(&CliError {
-                code: error::ERR_PROGRAMMATIC,
-                msg: format!("Failed to load config: {}", e),
-            }).unwrap_or_default());
+            let cli_err: CliError = e.into();
+            eprintln!("{}", serde_json::to_string(&cli_err).unwrap_or_default());
             std::process::exit(1);
         }
     };
@@ -327,10 +325,8 @@ async fn main() {
             std::process::exit(0);
         }
         Err(e) => {
-            let error_msg = serde_json::to_string(&CliError {
-                code: e.code(),
-                msg: e.message(),
-            }).unwrap_or_default();
+            let cli_err: CliError = e.into();
+            let error_msg = serde_json::to_string(&cli_err).unwrap_or_default();
             
             eprintln!("{}", error_msg);
             std::process::exit(1);
