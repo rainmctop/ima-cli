@@ -2,6 +2,7 @@
 
 use thiserror::Error;
 use serde::Serialize;
+use std::fmt;
 
 /// Programmatic error code (equivalent to -100 in Node.js version)
 pub const ERR_PROGRAMMATIC: i32 = -100;
@@ -9,14 +10,20 @@ pub const ERR_PROGRAMMATIC: i32 = -100;
 /// Update available error code (equivalent to -200 in Node.js version)
 pub const ERR_UPDATE_AVAILABLE: i32 = -200;
 
-/// Result type alias
-pub type Result<T> = std::result::Result<T, CliError>;
+/// Result type alias using internal Error enum
+pub type Result<T> = std::result::Result<T, Error>;
 
 /// CLI error structure for JSON output
 #[derive(Debug, Serialize)]
 pub struct CliError {
     pub code: i32,
     pub msg: String,
+}
+
+impl fmt::Display for CliError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "[{}] {}", self.code, self.msg)
+    }
 }
 
 /// Internal error enum
@@ -122,6 +129,15 @@ impl From<Error> for CliError {
         CliError {
             code: err.code(),
             msg: err.message(),
+        }
+    }
+}
+
+impl From<serde_json::Error> for CliError {
+    fn from(err: serde_json::Error) -> Self {
+        CliError {
+            code: ERR_PROGRAMMATIC,
+            msg: format!("JSON error: {}", err),
         }
     }
 }

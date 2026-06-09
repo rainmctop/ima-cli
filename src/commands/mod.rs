@@ -123,7 +123,7 @@ pub async fn check_update(config: &Config) -> Result<String> {
                     latest_version, config.skill_version, instruction
                 );
 
-                return Err(error::update_available(err_msg));
+                return Err(error::update_available(err_msg).into());
             }
         }
     }

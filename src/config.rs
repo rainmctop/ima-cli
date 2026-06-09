@@ -206,20 +206,20 @@ impl Config {
 
     /// Get the client ID
     pub fn client_id(&self) -> Result<&str> {
-        self.client_id
+        Ok(self.client_id
             .as_ref()
             .filter(|s| !s.is_empty())
             .map(|s| s.as_str())
-            .ok_or_else(|| error::missing_credentials("Client ID is missing"))
+            .ok_or_else(|| error::missing_credentials("Client ID is missing"))?)
     }
 
     /// Get the API key
     pub fn api_key(&self) -> Result<&str> {
-        self.api_key
+        Ok(self.api_key
             .as_ref()
             .filter(|s| !s.is_empty())
             .map(|s| s.as_str())
-            .ok_or_else(|| error::missing_credentials("API Key is missing"))
+            .ok_or_else(|| error::missing_credentials("API Key is missing"))?)
     }
 }
 
@@ -256,8 +256,8 @@ pub fn read_file_safe<P: AsRef<Path>>(path: P) -> String {
 
 /// Ensure directory exists
 pub fn ensure_dir<P: AsRef<Path>>(path: P) -> Result<()> {
-    fs::create_dir_all(path.as_ref())
-        .map_err(|e| error::invalid_config(format!("Failed to create directory {}: {}", path.as_ref().display(), e)))
+    Ok(fs::create_dir_all(path.as_ref())
+        .map_err(|e| error::invalid_config(format!("Failed to create directory {}: {}", path.as_ref().display(), e)))?)
 }
 
 /// Save today's date to the last check file
@@ -265,8 +265,8 @@ pub fn save_today_checked(last_check_file: &Path) -> Result<()> {
     ensure_dir(last_check_file.parent().unwrap())?;
     
     let today = chrono::Local::now().format("%Y-%m-%d").to_string();
-    fs::write(last_check_file, &today)
-        .map_err(|e| error::io_error(e))
+    Ok(fs::write(last_check_file, &today)
+        .map_err(|e| error::io_error(e))?)
 }
 
 /// Read the last checked date

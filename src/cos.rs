@@ -76,7 +76,7 @@ pub async fn upload_file(
         return Err(error::cos_upload_failed(format!(
             "COS upload failed (HTTP {}): {}",
             status, body
-        )));
+        )).into());
     }
 
     Ok(())
@@ -127,13 +127,14 @@ fn build_authorization(
     let signature = hmac_sha1(&sign_key, string_to_sign.as_bytes());
 
     // 6. Build Authorization header
+    let signature_hex = signature.encode_hex::<String>();
     format!(
         "q-sign-algorithm=sha1&q-ak={}&q-sign-time={}&q-key-time={}&q-header-list={}&q-url-param-list=&q-signature={}",
         secret_id,
         key_time,
         key_time,
         header_list.join(";"),
-        signature
+        signature_hex
     )
 }
 

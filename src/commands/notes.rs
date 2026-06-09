@@ -55,6 +55,12 @@ pub async fn handle_notes_command(action: NotesCommands, config: &Config) -> Res
     }
 }
 
+impl From<serde_json::Error> for crate::error::Result<String> {
+    fn from(err: serde_json::Error) -> Self {
+        Err(crate::error::json_error(err))
+    }
+}
+
 /// Validate and clean UTF-8 string
 fn validate_utf8(input: &str) -> Result<String> {
     // In Rust, strings are already valid UTF-8 by design.

@@ -14,7 +14,7 @@ pub async fn handle_kb_command(action: KbCommands, config: &Config) -> Result<St
 
     match action {
         KbCommands::Info { ids } => {
-            let id_list: Vec<String> = ids.split(',').map(|s| s.trim().to_string()).collect();
+            let id_list: Vec<String> = ids.split(',').map(|s: &str| s.trim().to_string()).collect();
             let response = client.get_knowledge_base(&id_list).await?;
             Ok(serde_json::to_string_pretty(&response.data)?)
         }
@@ -61,7 +61,7 @@ pub async fn handle_kb_command(action: KbCommands, config: &Config) -> Result<St
                     return Err(error::invalid_argument(format!(
                         "Invalid file spec '{}'. Expected format: name:media_type",
                         file_spec
-                    )));
+                    )).into());
                 }
                 let media_type: i32 = parts[1].parse()
                     .map_err(|_| error::invalid_argument(format!("Invalid media type '{}'", parts[1])))?;
@@ -101,7 +101,7 @@ async fn upload_file(
 
     // Validate file exists
     if !file_path.exists() {
-        return Err(error::file_validation_failed(format!("File not found: {}", file_path.display())));
+        return Err(error::file_validation_failed(format!("File not found: {}", file_path.display())).into());
     }
 
     // Read file content
@@ -176,12 +176,13 @@ async fn upload_file(
 
     let add_response = client.add_knowledge(&add_params).await?;
 
-    Ok(serde_json::to_string_pretty(&serde_json::json!({
+    let result = serde_json::json!({
         "success": true,
         "media_id": add_response.data.media_id,
         "file_name": file_name,
         "file_size": file_size,
-    }))?)
+    });
+    Ok(serde_json::to_string_pretty(&result)?)
 }
 
 /// Determine media type from file extension and content type
@@ -218,7 +219,7 @@ fn determine_media_type(ext: &str, content_type: &str) -> Result<i32> {
         return Err(error::file_validation_failed(format!(
             "Unsupported file type: extension={}, content_type={}",
             ext, content_type
-        )));
+        )).into());
     }
 
     Ok(media_type)
@@ -239,7 +240,7 @@ fn check_file_size_limit(media_type: i32, size: u64) -> Result<()> {
             "File size {} exceeds the {} limit for this file type",
             format_size(size),
             format_size(limit)
-        )));
+        )).into());
     }
 
     Ok(())

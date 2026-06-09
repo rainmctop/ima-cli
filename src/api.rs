@@ -50,11 +50,11 @@ impl ApiClient {
         
         headers.insert(
             "ima-openapi-clientid".to_string(),
-            self.config.client_id()?,
+            self.config.client_id()?.to_string(),
         );
         headers.insert(
             "ima-openapi-apikey".to_string(),
-            self.config.api_key()?,
+            self.config.api_key()?.to_string(),
         );
         headers.insert(
             "ima-openapi-ctx".to_string(),
@@ -77,7 +77,10 @@ impl ApiClient {
         let response = self
             .client
             .post(&url)
-            .headers((&headers).into_iter().collect())
+            .headers(headers.into_iter().map(|(k, v)| {
+                (reqwest::header::HeaderName::from_bytes(k.as_bytes()).unwrap(), 
+                 reqwest::header::HeaderValue::from_str(&v).unwrap())
+            }).collect::<std::collections::HashMap<_, _>>().into_iter().collect())
             .json(params)
             .send()
             .await
@@ -95,7 +98,7 @@ impl ApiClient {
             return Err(error::api_request_failed(format!(
                 "HTTP {}: {}",
                 status, error_body
-            )));
+            )).into());
         }
 
         let text = response
@@ -115,7 +118,7 @@ impl ApiClient {
                     .and_then(|v| v.as_str())
                     .unwrap_or("Unknown error")
                     .to_string();
-                return Err(error::api_error(code as i32, msg));
+                return Err(error::api_error(code as i32, msg).into());
             }
         }
 
@@ -137,7 +140,10 @@ impl ApiClient {
         let response = self
             .client
             .post(&url)
-            .headers((&headers).into_iter().collect())
+            .headers(headers.into_iter().map(|(k, v)| {
+                (reqwest::header::HeaderName::from_bytes(k.as_bytes()).unwrap(), 
+                 reqwest::header::HeaderValue::from_str(&v).unwrap())
+            }).collect::<std::collections::HashMap<_, _>>().into_iter().collect())
             .json(params)
             .send()
             .await
