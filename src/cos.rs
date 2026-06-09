@@ -2,8 +2,7 @@
 //! 
 //! Implements Tencent Cloud COS upload using temporary credentials from IMA API
 
-use reqwest::{Client, StatusCode};
-use std::collections::HashMap;
+use reqwest::Client;
 use std::path::Path;
 use std::time::{SystemTime, UNIX_EPOCH};
 use hmac::{Hmac, Mac};
@@ -18,13 +17,13 @@ type HmacSha1 = Hmac<Sha1>;
 /// Upload file to COS
 pub async fn upload_file(
     credential: &CosCredential,
-    file_path: &Path,
+    _file_path: &Path,
     file_content: &[u8],
 ) -> Result<()> {
     let bucket = &credential.bucket_name;
     let region = &credential.region;
     let cos_key = &credential.cos_key;
-    let appid = &credential.appid;
+    let _appid = &credential.appid;
 
     // Build COS endpoint
     let hostname = format!("{}.cos.{}.myqcloud.com", bucket, region);

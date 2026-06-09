@@ -8,9 +8,8 @@
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 use std::fs;
-use std::io::Read;
 
-use crate::error::{self, Result, Error};
+use crate::error::{self, Result};
 
 /// Default config directory path
 const CONFIG_DIR: &str = ".config/ima";

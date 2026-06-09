@@ -4,7 +4,7 @@ use crate::api::{ApiClient, CreateMediaParams, AddKnowledgeParams, FileInfo, Imp
 use crate::config::Config;
 use crate::cos;
 use crate::error::{self, Result};
-use crate::commands::KbCommands;
+use crate::KbCommands;
 use std::path::PathBuf;
 use mime_guess::from_path;
 
@@ -90,7 +90,7 @@ pub async fn handle_kb_command(action: KbCommands, config: &Config) -> Result<St
 /// Upload a file to knowledge base
 async fn upload_file(
     client: &ApiClient,
-    config: &Config,
+    _config: &Config,
     file_path: &PathBuf,
     kb_id: &str,
     folder_id: Option<&str>,

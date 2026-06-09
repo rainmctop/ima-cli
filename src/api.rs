@@ -2,13 +2,13 @@
 //! 
 //! Provides HTTP client for making requests to the IMA OpenAPI
 
-use reqwest::{Client, Response, StatusCode};
+use reqwest::{Client, Response};
 use serde::de::DeserializeOwned;
 use serde_json::Value;
 use std::collections::HashMap;
 
 use crate::config::Config;
-use crate::error::{self, Result, Error};
+use crate::error::{self, Result};
 
 /// Default request timeout in seconds
 const DEFAULT_TIMEOUT_SECS: u64 = 300; // 5 minutes

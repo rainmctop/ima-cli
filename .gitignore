@@ -2,12 +2,11 @@
 # Compiled and build artifacts
 *.o
 *.obj
-*.a
-*.lib
+*.exe
 *.dll
 *.so
-*.dylib
-*.exe
+*.a
+*.out
 target/
 
 # Dependencies
@@ -20,22 +19,18 @@ Cargo.lock
 *.tmp
 *.swp
 
+# Environment
+.env
+.env.local
+.env.*
+
 # Editors
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# Environment
-.env
-.env.local
-*.env.*
-
-# OS specific
-.DS_Store
-Thumbs.db
-
-# Rust specific
-**/target/
-Cargo.lock
+# Rust-specific
+**/*.rs.bk
+**/Cargo.lock
 ```
