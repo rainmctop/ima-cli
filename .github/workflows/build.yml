@@ -100,6 +100,19 @@ jobs:
           path: target/x86_64-unknown-linux-gnu/release/ima-cli
           if-no-files-found: error
 
+      - name: Create release archive
+        run: |
+          cd target/x86_64-unknown-linux-gnu/release
+          tar -czvf ../../../ima-cli-linux-x64.tar.gz ima-cli
+        shell: bash
+
+      - name: Upload release archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: ima-cli-linux-x64-archive
+          path: ima-cli-linux-x64.tar.gz
+          if-no-files-found: error
+
   build-macos-x64:
     name: Build for macOS x64
     runs-on: macos-latest
@@ -132,6 +145,19 @@ jobs:
         with:
           name: ima-cli-macos-x64
           path: target/x86_64-apple-darwin/release/ima-cli
+          if-no-files-found: error
+
+      - name: Create release archive
+        run: |
+          cd target/x86_64-apple-darwin/release
+          tar -czvf ../../../ima-cli-macos-x64.tar.gz ima-cli
+        shell: bash
+
+      - name: Upload release archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: ima-cli-macos-x64-archive
+          path: ima-cli-macos-x64.tar.gz
           if-no-files-found: error
 
   build-macos-arm64:
@@ -168,6 +194,19 @@ jobs:
           path: target/aarch64-apple-darwin/release/ima-cli
           if-no-files-found: error
 
+      - name: Create release archive
+        run: |
+          cd target/aarch64-apple-darwin/release
+          tar -czvf ../../../ima-cli-macos-arm64.tar.gz ima-cli
+        shell: bash
+
+      - name: Upload release archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: ima-cli-macos-arm64-archive
+          path: ima-cli-macos-arm64.tar.gz
+          if-no-files-found: error
+
   create-release:
     name: Create GitHub Release
     needs: [build-windows, build-linux, build-macos-x64, build-macos-arm64]
@@ -179,26 +218,22 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts
+          pattern: "*-archive"
+          merge-multiple: true
 
-      - name: Prepare release assets
+      - name: List release assets
         run: |
           cd artifacts
           ls -la
-          # Copy binaries to root with proper names
-          cp ima-cli-windows-x64/ima-cli.exe ima-cli-windows-x64.exe
-          cp ima-cli-linux-x64/ima-cli ima-cli-linux-x64
-          cp ima-cli-macos-x64/ima-cli ima-cli-macos-x64
-          cp ima-cli-macos-arm64/ima-cli ima-cli-macos-arm64
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            artifacts/ima-cli-windows-x64.exe
-            artifacts/ima-cli-linux-x64
-            artifacts/ima-cli-macos-x64
-            artifacts/ima-cli-macos-arm64
+            artifacts/*.zip
+            artifacts/*.tar.gz
           draft: false
           prerelease: false
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
